@@ -1,0 +1,235 @@
+// Mock user profile data
+export const mockUserProfile = {
+  id: 'user-001',
+  name: 'Leo Chen',
+  email: 'leo.chen@example.com',
+  avatar: '👨‍💻',
+  location: 'San Francisco, CA',
+  bio: 'Passionate about climate action and tech innovation',
+  joinDate: '2024-01-15',
+  totalMissionsCompleted: 3,
+  totalXpEarned: 2450,
+  verifiedTokens: 3,
+};
+
+// Mock skills tree
+export const mockSkillsTree = [
+  {
+    id: 'skill-001',
+    name: 'Leadership',
+    category: 'Management',
+    currentLevel: 12,
+    maxLevel: 50,
+    xp: 45,
+    maxXp: 100,
+    unlocked: true,
+  },
+  {
+    id: 'skill-002',
+    name: 'Project Management',
+    category: 'Management',
+    currentLevel: 10,
+    maxLevel: 50,
+    xp: 30,
+    maxXp: 100,
+    unlocked: true,
+  },
+  {
+    id: 'skill-003',
+    name: 'Resource Allocation',
+    category: 'Operations',
+    currentLevel: 8,
+    maxLevel: 50,
+    xp: 15,
+    maxXp: 100,
+    unlocked: true,
+  },
+  {
+    id: 'skill-004',
+    name: 'Social Media Marketing',
+    category: 'Marketing',
+    currentLevel: 0,
+    maxLevel: 50,
+    xp: 0,
+    maxXp: 100,
+    unlocked: false,
+  },
+  {
+    id: 'skill-005',
+    name: 'Campaign Analytics',
+    category: 'Marketing',
+    currentLevel: 0,
+    maxLevel: 50,
+    xp: 0,
+    maxXp: 100,
+    unlocked: false,
+  },
+  {
+    id: 'skill-006',
+    name: 'Event Coordination',
+    category: 'Operations',
+    currentLevel: 5,
+    maxLevel: 50,
+    xp: 20,
+    maxXp: 100,
+    unlocked: true,
+  },
+];
+
+// Mock missions for marketplace
+export const mockMissions = [
+  {
+    id: 'mission-001',
+    title: 'Social Media Campaign Manager',
+    organization: 'Food Bank X',
+    description: 'Manage a 4-week social media campaign to increase community awareness',
+    location: 'Remote',
+    type: 'Remote',
+    requiredSkills: [
+      { skillId: 'skill-004', skillName: 'Social Media Marketing', requiredLevel: 5 },
+      { skillId: 'skill-005', skillName: 'Campaign Analytics', requiredLevel: 3 },
+    ],
+    rewards: {
+      xp: 500,
+      tokens: 1,
+    },
+    matchScore: 85,
+    duration: '4 weeks',
+    status: 'available',
+    startDate: '2024-03-15',
+  },
+  {
+    id: 'mission-002',
+    title: 'Volunteer Coordinator',
+    organization: 'Beach Cleanup Initiative',
+    description: 'Coordinate 20+ volunteers for monthly beach cleanup events',
+    location: 'San Francisco, CA',
+    type: 'Hybrid',
+    requiredSkills: [
+      { skillId: 'skill-001', skillName: 'Leadership', requiredLevel: 8 },
+      { skillId: 'skill-003', skillName: 'Resource Allocation', requiredLevel: 5 },
+    ],
+    rewards: {
+      xp: 400,
+      tokens: 1,
+    },
+    matchScore: 92,
+    duration: '3 months',
+    status: 'available',
+    startDate: '2024-03-01',
+  },
+  {
+    id: 'mission-003',
+    title: 'Event Planning Assistant',
+    organization: 'Tech for Good Summit',
+    description: 'Assist in planning and executing an AI ethics conference for 500+ attendees',
+    location: 'San Francisco, CA',
+    type: 'Local',
+    requiredSkills: [
+      { skillId: 'skill-006', skillName: 'Event Coordination', requiredLevel: 6 },
+      { skillId: 'skill-001', skillName: 'Leadership', requiredLevel: 5 },
+    ],
+    rewards: {
+      xp: 600,
+      tokens: 1,
+    },
+    matchScore: 78,
+    duration: '2 months',
+    status: 'available',
+    startDate: '2024-04-01',
+  },
+  {
+    id: 'mission-004',
+    title: 'Community Outreach Lead',
+    organization: 'Climate Action Now',
+    description: 'Lead outreach efforts to recruit young climate advocates in your region',
+    location: 'San Francisco, CA',
+    type: 'Hybrid',
+    requiredSkills: [
+      { skillId: 'skill-001', skillName: 'Leadership', requiredLevel: 10 },
+    ],
+    rewards: {
+      xp: 550,
+      tokens: 1,
+    },
+    matchScore: 88,
+    duration: '5 months',
+    status: 'available',
+    startDate: '2024-03-20',
+  },
+];
+
+// Mock completed missions for evaluation
+export const mockCompletedMissions = [
+  {
+    id: 'completed-001',
+    title: 'Beach Cleanup Coordinator',
+    organization: 'Beach Cleanup Initiative',
+    completedDate: '2024-02-28',
+    volunteerName: 'Leo Chen',
+    volunteerEmail: 'leo.chen@example.com',
+    skillsVerified: [
+      { skillId: 'skill-001', skillName: 'Leadership', levelGained: 3 },
+      { skillId: 'skill-003', skillName: 'Resource Allocation', levelGained: 2 },
+    ],
+    status: 'awaiting_verification',
+    missionDuration: '4 weeks',
+    description: 'Coordinated 15+ volunteers across 4 beach cleanup events',
+  },
+  {
+    id: 'completed-002',
+    title: 'Community Workshop Facilitator',
+    organization: 'Tech Diversity Alliance',
+    completedDate: '2024-02-15',
+    volunteerName: 'Leo Chen',
+    volunteerEmail: 'leo.chen@example.com',
+    skillsVerified: [
+      { skillId: 'skill-001', skillName: 'Leadership', levelGained: 2 },
+    ],
+    status: 'verified',
+    missionDuration: '2 weeks',
+    description: 'Facilitated workshops on tech careers for 50+ underrepresented students',
+  },
+  {
+    id: 'completed-003',
+    title: 'Social Media Content Creator',
+    organization: 'Environmental Justice Fund',
+    completedDate: '2024-01-30',
+    volunteerName: 'Leo Chen',
+    volunteerEmail: 'leo.chen@example.com',
+    skillsVerified: [
+      { skillId: 'skill-004', skillName: 'Social Media Marketing', levelGained: 1 },
+    ],
+    status: 'verified',
+    missionDuration: '3 weeks',
+    description: 'Created and scheduled social media content for climate awareness campaign',
+  },
+];
+
+// Gamification Badges
+export const mockBadges = [
+  {
+    id: 'badge-001',
+    name: 'First Impact',
+    description: 'Completed your first mission',
+    icon: '🌟',
+    earnedDate: '2024-01-30',
+    category: 'milestone',
+  },
+  {
+    id: 'badge-002',
+    name: 'Leadership Unlocked',
+    description: 'Reached Level 10 in Leadership',
+    icon: '👑',
+    earnedDate: '2024-02-15',
+    category: 'skill',
+  },
+  {
+    id: 'badge-003',
+    name: 'Verified Advocate',
+    description: 'Earned 3 Verified Impact Tokens',
+    icon: '✅',
+    earnedDate: '2024-02-28',
+    category: 'achievement',
+  },
+];
