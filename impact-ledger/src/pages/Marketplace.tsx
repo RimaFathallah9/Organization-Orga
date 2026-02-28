@@ -1,20 +1,71 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardBody, CardFooter, Badge, Button } from '../components';
-import { mockMissions } from '../data/mockData';
+import { mockMissions, mockUserProfile, mockSkillsTree } from '../data/mockData';
+import { calculateMissionMatch, generateMissionRecommendations } from '../services/aiEvaluationService';
 import styles from './Marketplace.module.css';
 
 export const Marketplace: React.FC = () => {
   const [filterType, setFilterType] = useState<'all' | 'remote' | 'hybrid' | 'local'>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<'match' | 'xp' | 'recent'>('match');
   const [selectedMission, setSelectedMission] = useState<string | null>(null);
+  const [savedMissions, setSavedMissions] = useState<Set<string>>(new Set());
 
-  const filteredMissions =
-    filterType === 'all'
-      ? mockMissions
-      : mockMissions.filter((m) => m.type.toLowerCase() === filterType);
+  // Get user skills from mock data
+  const userSkills = mockSkillsTree
+    .filter(s => s.unlocked)
+    .map(s => s.name);
+
+  // Calculate match scores for all missions using AI
+  const missionsWithMatch = mockMissions.map(mission => {
+    const match = calculateMissionMatch(
+      userSkills,
+      mission.requiredSkills.map(s => s.skillName),
+      mockUserProfile.location,
+      mission.location,
+      mockUserProfile.totalXpEarned
+    );
+    return {
+      ...mission,
+      aiMatchScore: match.matchScore,
+      skillGaps: match.skillGaps,
+      developmentPath: match.developmentPath
+    };
+  });
+
+  // Filter missions
+  let filteredMissions = missionsWithMatch
+    .filter(m => filterType === 'all' ? true : m.type.toLowerCase() === filterType)
+    .filter(m => searchTerm === '' ? true : 
+      m.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.organization.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+  // Sort missions
+  if (sortBy === 'match') {
+    filteredMissions = filteredMissions.sort((a, b) => b.aiMatchScore - a.aiMatchScore);
+  } else if (sortBy === 'xp') {
+    filteredMissions = filteredMissions.sort((a, b) => b.rewards.xp - a.rewards.xp);
+  }
 
   const handleApply = (missionId: string) => {
-    alert(`Applied to mission: ${missionId}`);
+    const mission = missionsWithMatch.find(m => m.id === missionId);
+    if (mission) {
+      alert(`✅ Applied to: ${mission.title}\n\n${mission.developmentPath}`);
+      setSelectedMission(null);
+    }
+  };
+
+  const toggleSaveMission = (missionId: string) => {
+    const newSaved = new Set(savedMissions);
+    if (newSaved.has(missionId)) {
+      newSaved.delete(missionId);
+    } else {
+      newSaved.add(missionId);
+    }
+    setSavedMissions(newSaved);
   };
 
   const containerVariants = {
@@ -52,13 +103,17 @@ export const Marketplace: React.FC = () => {
         </div>
         <div className={styles.stats}>
           <div className={styles.statBadge}>
-            <span className={styles.statNumber}>{mockMissions.length}</span>
-            <span className={styles.statLabel}>Active Missions</span>
+            <span className={styles.statNumber}>{filteredMissions.length}</span>
+            <span className={styles.statLabel}>Matching Missions</span>
+          </div>
+          <div className={styles.statBadge}>
+            <span className={styles.statNumber}>⚡ AI-Powered</span>
+            <span className={styles.statLabel}>Smart Matching</span>
           </div>
         </div>
       </motion.div>
 
-      {/* Filters */}
+      {/* Search and Filters */}
       <motion.div
         className={styles.filterSection}
         variants={itemVariants}
@@ -67,6 +122,17 @@ export const Marketplace: React.FC = () => {
       >
         <Card>
           <CardBody className={styles.filterContent}>
+            {/* Search Bar */}
+            <div className={styles.searchBar}>
+              <input
+                type="text"
+                placeholder="🔍 Search missions, organizations..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.searchInput}
+              />
+            </div>
+
             <div className={styles.filterGroup}>
               <label>📍 Location Preference</label>
               <div className={styles.filterButtons}>
@@ -85,6 +151,27 @@ export const Marketplace: React.FC = () => {
                 ))}
               </div>
             </div>
+
+            <div className={styles.filterGroup}>
+              <label>🔤 Sort By</label>
+              <div className={styles.filterButtons}>
+                {[
+                  { value: 'match' as const, label: '🎯 Best Match' },
+                  { value: 'xp' as const, label: '⚡ Most XP' },
+                  { value: 'recent' as const, label: '✨ Recent' }
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    className={`${styles.filterBtn} ${
+                      sortBy === option.value ? styles.active : ''
+                    }`}
+                    onClick={() => setSortBy(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </CardBody>
         </Card>
       </motion.div>
@@ -97,102 +184,144 @@ export const Marketplace: React.FC = () => {
         animate="visible"
       >
         {filteredMissions.length > 0 ? (
-          filteredMissions.map((mission) => (
-            <motion.div key={mission.id} variants={itemVariants}>
-              <Card
-                hoverable
-                interactive={selectedMission === mission.id}
-                onClick={() => setSelectedMission(mission.id)}
-              >
-                <CardHeader>
-                  <div className={styles.missionHeader}>
-                    <div className={styles.missionTitle}>
-                      <h3>{mission.title}</h3>
-                      <p className={styles.organization}>{mission.organization}</p>
+          filteredMissions.map((mission) => {
+            const recommendations = generateMissionRecommendations(mission.aiMatchScore, mission.skillGaps);
+            const isSaved = savedMissions.has(mission.id);
+            
+            return (
+              <motion.div key={mission.id} variants={itemVariants}>
+                <Card
+                  hoverable
+                  interactive={selectedMission === mission.id}
+                  onClick={() => setSelectedMission(mission.id)}
+                >
+                  <CardHeader>
+                    <div className={styles.missionHeader}>
+                      <div className={styles.missionTitle}>
+                        <h3>{mission.title}</h3>
+                        <p className={styles.organization}>{mission.organization}</p>
+                      </div>
+                      <div
+                        className={`${styles.matchScore} ${
+                          mission.aiMatchScore >= 85
+                            ? styles.scoreHigh
+                            : mission.aiMatchScore >= 70
+                              ? styles.scoreMid
+                              : styles.scoreLow
+                        }`}
+                      >
+                        <div className={styles.scoreValue}>🤖 {mission.aiMatchScore}%</div>
+                        <div className={styles.scoreLabel}>AI Match</div>
+                      </div>
                     </div>
-                    <div
-                      className={`${styles.matchScore} ${
-                        mission.matchScore >= 80
-                          ? styles.scoreHigh
-                          : mission.matchScore >= 60
-                            ? styles.scoreMid
-                            : styles.scoreLow
-                      }`}
-                    >
-                      <div className={styles.scoreValue}>{mission.matchScore}%</div>
-                      <div className={styles.scoreLabel}>Match</div>
-                    </div>
-                  </div>
-                </CardHeader>
+                  </CardHeader>
 
-                <CardBody>
-                  <p className={styles.description}>{mission.description}</p>
+                  <CardBody>
+                    <p className={styles.description}>{mission.description}</p>
 
-                  <div className={styles.details}>
-                    <div className={styles.detail}>
-                      <span className={styles.icon}>📍</span>
-                      <span>{mission.location}</span>
+                    {/* Development Path from AI */}
+                    <div className={styles.developmentPath}>
+                      <span className={styles.pathIcon}>📈</span>
+                      <p>{mission.developmentPath}</p>
                     </div>
-                    <div className={styles.detail}>
-                      <span className={styles.icon}>⏱️</span>
-                      <span>{mission.duration}</span>
-                    </div>
-                    <div className={styles.detail}>
-                      <span className={styles.icon}>🗓️</span>
-                      <span>
-                        Starts{' '}
-                        {new Date(mission.startDate).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className={styles.skillsRequired}>
-                    <h4>🎓 Skills Needed</h4>
-                    <div className={styles.skillTags}>
-                      {mission.requiredSkills.map((req) => (
-                        <Badge key={req.skillId} variant="secondary">
-                          {req.skillName} (Lvl {req.requiredLevel}+)
-                        </Badge>
+                    {/* Skill Gaps */}
+                    {mission.skillGaps.length > 0 && (
+                      <div className={styles.skillGaps}>
+                        <h4>Skill Gap Analysis</h4>
+                        <div className={styles.skillTags}>
+                          {mission.skillGaps.map((skill, idx) => (
+                            <Badge key={idx} variant="secondary">
+                              📚 {skill}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className={styles.details}>
+                      <div className={styles.detail}>
+                        <span className={styles.icon}>📍</span>
+                        <span>{mission.location}</span>
+                      </div>
+                      <div className={styles.detail}>
+                        <span className={styles.icon}>⏱️</span>
+                        <span>{mission.duration}</span>
+                      </div>
+                      <div className={styles.detail}>
+                        <span className={styles.icon}>🗓️</span>
+                        <span>
+                          Starts{' '}
+                          {new Date(mission.startDate).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className={styles.skillsRequired}>
+                      <h4>🎓 Skills Needed</h4>
+                      <div className={styles.skillTags}>
+                        {mission.requiredSkills.map((req) => (
+                          <Badge key={req.skillId} variant="secondary">
+                            {req.skillName} (Lvl {req.requiredLevel}+)
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className={styles.rewards}>
+                      <div className={styles.rewardItem}>
+                        <span className={styles.rewardIcon}>⚡</span>
+                        <div>
+                          <div className={styles.rewardValue}>{mission.rewards.xp} XP</div>
+                          <div className={styles.rewardLabel}>Experience</div>
+                        </div>
+                      </div>
+                      <div className={styles.rewardItem}>
+                        <span className={styles.rewardIcon}>🏆</span>
+                        <div>
+                          <div className={styles.rewardValue}>{mission.rewards.tokens} Token</div>
+                          <div className={styles.rewardLabel}>Verified Impact</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* AI Recommendations */}
+                    <div className={styles.recommendations}>
+                      <h4>💡 AI Recommendations</h4>
+                      {recommendations.map((rec, idx) => (
+                        <div key={idx} className={styles.recommendation}>
+                          {rec}
+                        </div>
                       ))}
                     </div>
-                  </div>
+                  </CardBody>
 
-                  <div className={styles.rewards}>
-                    <div className={styles.rewardItem}>
-                      <span className={styles.rewardIcon}>⚡</span>
-                      <div>
-                        <div className={styles.rewardValue}>{mission.rewards.xp} XP</div>
-                        <div className={styles.rewardLabel}>Experience</div>
-                      </div>
-                    </div>
-                    <div className={styles.rewardItem}>
-                      <span className={styles.rewardIcon}>🏆</span>
-                      <div>
-                        <div className={styles.rewardValue}>{mission.rewards.tokens} Token</div>
-                        <div className={styles.rewardLabel}>Verified Impact</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardBody>
-
-                <CardFooter>
-                  <Button
-                    variant="primary"
-                    fullWidth
-                    onClick={() => handleApply(mission.id)}
-                  >
-                    Apply Now
-                  </Button>
-                </CardFooter>
-              </Card>
-            </motion.div>
-          ))
+                  <CardFooter>
+                    <Button
+                      variant="primary"
+                      fullWidth
+                      onClick={() => handleApply(mission.id)}
+                    >
+                      Apply Now
+                    </Button>
+                    <button
+                      className={styles.saveButton}
+                      onClick={() => toggleSaveMission(mission.id)}
+                      title={isSaved ? 'Remove from saved' : 'Save for later'}
+                    >
+                      {isSaved ? '❤️' : '🤍'}
+                    </button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            );
+          })
         ) : (
           <div className={styles.noResults}>
-            <p>No missions found for this filter</p>
+            <p>📭 No missions found. Try adjusting your filters!</p>
           </div>
         )}
       </motion.div>

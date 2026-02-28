@@ -45,6 +45,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, onLogout }) => {
             Marketplace
           </button>
           <button
+            className={`${styles.navLink} ${activeLink === 'organization' ? styles.active : ''}`}
+            onClick={() => handleNavClick('organization')}
+          >
+            Organizations
+          </button>
+          <button
             className={`${styles.navLink} ${activeLink === 'evaluation' ? styles.active : ''}`}
             onClick={() => handleNavClick('evaluation')}
           >

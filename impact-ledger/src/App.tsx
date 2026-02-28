@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { MainLayout } from './layouts/MainLayout';
-import { Dashboard, Marketplace, Evaluation } from './pages';
+import { Dashboard, Marketplace, Evaluation, Organization } from './pages';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import './App.css';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'marketplace' | 'evaluation'>('dashboard');
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'marketplace' | 'evaluation' | 'organization'>('dashboard');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
 
@@ -21,7 +21,7 @@ function App() {
   }, []);
 
   const handleNavigate = (page: string) => {
-    setCurrentPage(page as 'dashboard' | 'marketplace' | 'evaluation');
+    setCurrentPage(page as 'dashboard' | 'marketplace' | 'evaluation' | 'organization');
   };
 
   const handleLoginSuccess = () => {
@@ -48,6 +48,8 @@ function App() {
         return <Marketplace />;
       case 'evaluation':
         return <Evaluation />;
+      case 'organization':
+        return <Organization />;
       default:
         return <Dashboard />;
     }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import Button from '../components/Button';
+import { validateEmail, evaluatePasswordStrength } from '../services/aiEvaluationService';
 import styles from './Login.module.css';
 
 interface LoginProps {
@@ -13,20 +13,54 @@ export default function Login({ onLoginSuccess, onSignupClick }: LoginProps) {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [emailValidation, setEmailValidation] = useState<any>(null);
+  const [passwordValidation, setPasswordValidation] = useState<any>(null);
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (value) {
+      const validation = validateEmail(value);
+      setEmailValidation(validation);
+    }
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    if (value) {
+      const validation = evaluatePasswordStrength(value);
+      setPasswordValidation(validation);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validate with AI service
+    const emailEval = validateEmail(email);
+    const passwordEval = evaluatePasswordStrength(password);
+
+    if (!emailEval.isValid) {
+      setError(`Invalid email: ${emailEval.feedback[0]}`);
+      return;
+    }
+
+    if (!passwordEval.isValid) {
+      setError(`Weak password: ${passwordEval.feedback[0]}`);
+      return;
+    }
+
     setLoading(true);
 
-    // Simulate login
+    // Simulate login with AI verification
     setTimeout(() => {
-      if (email && password.length >= 6) {
-        localStorage.setItem('user', JSON.stringify({ email, role: 'student' }));
-        onLoginSuccess();
-      } else {
-        setError('Invalid email or password');
-      }
+      localStorage.setItem('user', JSON.stringify({ 
+        email, 
+        role: 'student',
+        loginTime: new Date().toISOString(),
+        verified: true 
+      }));
+      onLoginSuccess();
       setLoading(false);
     }, 1000);
   };
@@ -81,11 +115,16 @@ export default function Login({ onLoginSuccess, onSignupClick }: LoginProps) {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => handleEmailChange(e.target.value)}
               placeholder="your@email.com"
-              className={styles.input}
+              className={`${styles.input} ${emailValidation && !emailValidation.isValid ? styles.inputError : ''}`}
               required
             />
+            {emailValidation && !emailValidation.isValid && (
+              <div className={styles.validationFeedback}>
+                {emailValidation.feedback[0]}
+              </div>
+            )}
           </motion.div>
 
           <motion.div
@@ -100,11 +139,21 @@ export default function Login({ onLoginSuccess, onSignupClick }: LoginProps) {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => handlePasswordChange(e.target.value)}
               placeholder="Enter your password"
-              className={styles.input}
+              className={`${styles.input} ${passwordValidation && !passwordValidation.isValid ? styles.inputError : ''}`}
               required
             />
+            {passwordValidation && (
+              <div className={styles.validationFeedback}>
+                {passwordValidation.isValid ? '✅ Strong password' : `⚠️ ${passwordValidation.feedback[0]}`}
+              </div>
+            )}
+            {passwordValidation && passwordValidation.score && (
+              <div className={styles.passwordStrength}>
+                <div className={styles.strengthBar} style={{ width: `${passwordValidation.score}%` }}></div>
+              </div>
+            )}
           </motion.div>
 
           {error && (

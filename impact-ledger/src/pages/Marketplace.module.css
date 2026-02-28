@@ -79,7 +79,38 @@
 }
 
 .filterContent {
-  padding: 0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 0.875rem 1.25rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .filterGroup {
@@ -92,6 +123,7 @@
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
+  font-size: 0.95rem;
 }
 
 .filterButtons {
@@ -302,6 +334,66 @@
   font-weight: 500;
 }
 
+.developmentPath {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(139, 92, 246, 0.1);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-md);
+}
+
+.pathIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.developmentPath p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.skillGaps {
+  margin: 1.5rem 0;
+}
+
+.skillGaps h4 {
+  margin: 0 0 0.75rem 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.recommendations {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: var(--radius-md);
+}
+
+.recommendations h4 {
+  margin: 0 0 0.75rem 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.recommendation {
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.recommendation:last-child {
+  border-bottom: none;
+}
+
 .tipsSection {
   margin-top: 2rem;
 }
@@ -332,4 +424,21 @@
   margin: 0;
   color: var(--text-secondary);
   line-height: 1.5;
+}
+
+.saveButton {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  margin-left: 0.5rem;
+}
+
+.saveButton:hover {
+  border-color: var(--secondary);
+  background: rgba(139, 92, 246, 0.1);
+  transform: scale(1.1);
 }

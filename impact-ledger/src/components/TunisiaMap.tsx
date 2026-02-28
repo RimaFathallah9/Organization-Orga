@@ -1,5 +1,5 @@
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
-import { LatLngExpression } from 'leaflet';
+import type { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import styles from './TunisiaMap.module.css';
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import Button from '../components/Button';
+import { validateUserProfile, evaluatePasswordStrength, validateEmail } from '../services/aiEvaluationService';
 import styles from './Signup.module.css';
 
 interface SignupProps {
@@ -22,26 +22,62 @@ export default function Signup({ onSignupSuccess, onBackToLogin }: SignupProps) 
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldValidations, setFieldValidations] = useState<Record<string, any>>({});
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+
+    // Real-time AI validation
+    if (name === 'email' && value) {
+      const validation = validateEmail(value);
+      setFieldValidations(prev => ({ ...prev, email: validation }));
+    } else if (name === 'password' && value) {
+      const validation = evaluatePasswordStrength(value);
+      setFieldValidations(prev => ({ ...prev, password: validation }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
+    // Validate with AI service
+    const profileEval = validateUserProfile({
+      email: formData.email,
+      password: formData.password,
+      name: formData.name,
+      location: formData.location,
+      userType
+    });
+
+    if (!profileEval.isValid) {
+      setError(profileEval.feedback[0] || 'Please fix the errors below');
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError('❌ Passwords do not match');
+      return;
+    }
+
+    if (!agreedToTerms) {
+      setError('❌ Please agree to the terms and conditions');
       return;
     }
 
     setLoading(true);
     setTimeout(() => {
       localStorage.setItem('user', JSON.stringify({
-        ...formData,
-        role: userType
+        name: formData.name,
+        email: formData.email,
+        location: formData.location,
+        organization: formData.organization || 'Unspecified',
+        role: userType,
+        signupTime: new Date().toISOString(),
+        verified: true,
+        allocationScore: profileEval.score
       }));
       onSignupSuccess();
       setLoading(false);
@@ -180,9 +216,14 @@ export default function Signup({ onSignupSuccess, onBackToLogin }: SignupProps) 
               value={formData.email}
               onChange={handleInputChange}
               placeholder="your@email.com"
-              className={styles.input}
+              className={`${styles.input} ${fieldValidations.email && !fieldValidations.email.isValid ? styles.inputError : ''}`}
               required
             />
+            {fieldValidations.email && !fieldValidations.email.isValid && (
+              <div className={styles.validationFeedback}>
+                {fieldValidations.email.feedback[0]}
+              </div>
+            )}
           </motion.div>
 
           {/* Password */}
@@ -199,10 +240,20 @@ export default function Signup({ onSignupSuccess, onBackToLogin }: SignupProps) 
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              placeholder="At least 6 characters"
-              className={styles.input}
+              placeholder="At least 8 characters"
+              className={`${styles.input} ${fieldValidations.password && !fieldValidations.password.isValid ? styles.inputError : ''}`}
               required
             />
+            {fieldValidations.password && (
+              <div className={styles.validationFeedback}>
+                {fieldValidations.password.isValid ? '✅ Strong password' : `⚠️ ${fieldValidations.password.feedback[0]}`}
+              </div>
+            )}
+            {fieldValidations.password && fieldValidations.password.score && (
+              <div className={styles.passwordStrength}>
+                <div className={styles.strengthBar} style={{ width: `${fieldValidations.password.score}%` }}></div>
+              </div>
+            )}
           </motion.div>
 
           {/* Confirm Password */}
@@ -223,6 +274,16 @@ export default function Signup({ onSignupSuccess, onBackToLogin }: SignupProps) 
               className={styles.input}
               required
             />
+            {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+              <div className={styles.validationFeedback} style={{ color: '#ff6b6b' }}>
+                ❌ Passwords do not match
+              </div>
+            )}
+            {formData.confirmPassword && formData.password === formData.confirmPassword && (
+              <div className={styles.validationFeedback} style={{ color: '#51cf66' }}>
+                ✅ Passwords match
+              </div>
+            )}
           </motion.div>
 
           {error && (
@@ -235,12 +296,30 @@ export default function Signup({ onSignupSuccess, onBackToLogin }: SignupProps) 
             </motion.div>
           )}
 
-          <motion.button
+          {/* Terms Agreement */}
+          <motion.div
+            className={styles.termsContainer}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: userType === 'student' ? 0.5 : 0.45 }}
+          >
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className={styles.checkbox}
+              />
+              <span>I agree to the Terms of Service and Privacy Policy</span>
+            </label>
+          </motion.div>
+
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: userType === 'student' ? 0.55 : 0.5 }}
             type="submit"
-            disabled={loading}
+            disabled={loading || !agreedToTerms}
             className={styles.submitButton}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}

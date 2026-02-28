@@ -166,6 +166,35 @@
   margin: 0;
 }
 
+.validationFeedback {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #ff6b6b;
+  padding: 0.5rem;
+  background: rgba(255, 107, 107, 0.1);
+  border-radius: 0.5rem;
+}
+
+.inputError {
+  border-color: #ff6b6b !important;
+  background: rgba(255, 107, 107, 0.05) !important;
+}
+
+.passwordStrength {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.strengthBar {
+  height: 4px;
+  background: linear-gradient(90deg, #ff6b6b 0%, #ffa94d 50%, #51cf66 100%);
+  border-radius: 2px;
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
 .backgroundBlob {
   position: absolute;
   width: 400px;

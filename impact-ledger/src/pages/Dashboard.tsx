@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 // import TunisiaMap from '../components/TunisiaMap';
 import styles from './Dashboard.module.css';
 
@@ -29,17 +29,6 @@ const impactMetrics = [
 const COLORS = ['#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B'];
 
 export const Dashboard = () => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
-  };
-
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -60,7 +49,7 @@ export const Dashboard = () => {
       </div>
 
       {/* Key Metrics */}
-      <div className={styles.metricsGrid}>
+      <motion.div className={styles.metricsGrid}>
         {impactMetrics.map((metric, idx) => (
           <motion.div
             key={metric.name}
@@ -81,7 +70,7 @@ export const Dashboard = () => {
             <div className={styles.metricTrend}>↑ 12%</div>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Charts Section */}
       <div className={styles.chartsSection}>
