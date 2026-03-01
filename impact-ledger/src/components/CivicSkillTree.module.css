@@ -1,0 +1,218 @@
+.container {
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(52, 211, 153, 0.05) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  backdrop-filter: blur(20px);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Category Filter */
+.categoryFilter {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.categoryBtn {
+  padding: 8px 16px;
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  border-radius: 8px;
+  background: transparent;
+  color: #e5e7eb;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 13px;
+}
+
+.categoryBtn:hover {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.categoryBtn.active {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  border-color: transparent;
+  color: #1f2937;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+/* Sections */
+.section {
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lockedHint {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+/* Skill Grid */
+.skillGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* Skill Card */
+.skillCard {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.08);
+  backdrop-filter: blur(20px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.skillCard.unlocked {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.05) 100%);
+}
+
+.skillCard.unlocked:hover {
+  border-color: #10b981;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+  transform: translateY(-4px);
+}
+
+.skillCard.locked {
+  opacity: 0.6;
+  background: rgba(107, 114, 128, 0.1);
+  border-color: rgba(107, 114, 128, 0.2);
+  cursor: not-allowed;
+}
+
+/* Icon */
+.skillIcon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+/* Content */
+.skillContent {
+  margin-bottom: 12px;
+}
+
+.skillName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f3f4f6;
+  margin-bottom: 4px;
+}
+
+.skillCategory {
+  font-size: 12px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+/* Level Badge */
+.levelBadge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  color: #1f2937;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Locked Badge */
+.lockedBadge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(107, 114, 128, 0.3);
+  color: #d1d5db;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+/* XP Bar */
+.xpContainer {
+  margin-bottom: 12px;
+}
+
+.xpBar {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.xpFill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  border-radius: 4px;
+}
+
+.xpText {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* Description */
+.skillDescription {
+  font-size: 13px;
+  color: #d1d5db;
+  line-height: 1.4;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .skillGrid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .skillCard {
+    padding: 12px;
+  }
+
+  .skillIcon {
+    font-size: 28px;
+  }
+
+  .skillName {
+    font-size: 14px;
+  }
+}

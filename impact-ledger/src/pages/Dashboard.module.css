@@ -347,48 +347,317 @@
   .chartsSection {
     grid-template-columns: 1fr;
   }
+}
 
-  .title {
-    font-size: 2rem;
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.statCard {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.05) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.statIcon {
+  font-size: 32px;
+}
+
+.statContent {
+  flex: 1;
+}
+
+.statLabel {
+  font-size: 13px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Two Column Row */
+.twoColumnRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* Tokens Section */
+.tokensSection {
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(52, 211, 153, 0.05) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  backdrop-filter: blur(20px);
+  margin-top: 32px;
+}
+
+.tokensHeader {
+  margin-bottom: 24px;
+}
+
+.tokensTitle {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tokensSubtitle {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.tokensList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.tokenCard {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.tokenCard:hover {
+  border-color: #10b981;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+  transform: translateY(-2px);
+}
+
+.tokenIcon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.tokenContent {
+  flex: 1;
+}
+
+.tokenName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f3f4f6;
+  margin-bottom: 4px;
+}
+
+.tokenOrg {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+
+.tokenMeta {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+}
+
+.tokenScore {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.tokenDate {
+  color: #6b7280;
+}
+
+.tokenStatus {
+  font-weight: 600;
+  color: #10b981;
+}
+
+/* Skill Modal */
+.skillModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(4px);
+}
+
+.skillModalContent {
+  background: #1f2937;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  position: relative;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.closeBtn:hover {
+  color: #f3f4f6;
+}
+
+.skillModalHeader {
+  margin-bottom: 24px;
+}
+
+.skillModalHeader h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f3f4f6;
+  margin-bottom: 8px;
+}
+
+.skillModalHeader p {
+  font-size: 14px;
+  color: #d1d5db;
+  line-height: 1.5;
+}
+
+.skillModalMeta {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 20px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 12px;
+}
+
+.metaLabel {
+  font-size: 12px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.metaValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: #10b981;
+}
+
+@media (max-width: 1024px) {
+  .twoColumnRow {
+    grid-template-columns: 1fr;
+  }
+
+  .tokensTitle {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .statCard {
+    padding: 16px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .statIcon {
+    font-size: 28px;
+  }
+
+  .statValue {
+    font-size: 22px;
+  }
+
+  .tokensSection {
+    padding: 16px;
+  }
+
+  .tokensList {
+    grid-template-columns: 1fr;
+  }
+
+  .tokenCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .skillModalContent {
+    max-width: 90vw;
+    padding: 24px;
   }
 }
 
 @media (max-width: 640px) {
   .dashboard {
-    padding: 1.5rem 1rem;
+    padding: 1rem;
   }
 
   .title {
     font-size: 1.5rem;
   }
 
-  .metricsGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 
-  .metricCard {
-    flex-direction: column;
-    text-align: center;
+  .statCard {
+    padding: 12px;
   }
 
-  .metricContent {
-    order: -1;
+  .statIcon {
+    font-size: 24px;
   }
 
-  .chartsSection {
-    gap: 1.5rem;
+  .statValue {
+    font-size: 18px;
   }
 
-  .gridSection {
-    gap: 1.5rem;
-  }
-
-  .cta {
-    padding: 2rem 1.5rem;
-  }
-
-  .cta h2 {
-    font-size: 1.5rem;
+  .statLabel {
+    font-size: 11px;
   }
 }
+
+
